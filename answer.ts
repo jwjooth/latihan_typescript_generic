@@ -203,32 +203,34 @@ console.log(processAnimal(animal)); // Output: Processing animal...
 // processAnimal("not an animal");  // ❌ Error: string bukan Animal
 
 // soal 13
-class Repository<T>{
-  public array: Array<T> = [];
-  add(item: T): void{
-    this.array.push(item);
+class Repository<T extends User> {
+  private items: T[] = [];
+  add(item: T): void {
+    this.items.push(item);
   }
-  getAll(): T[]{
-    return this.array;
+  getAll(): T[] {
+    return this.items;
   }
-  getById(id: number): T[] | undefined {
-    for(let i: number = 0; i < this.array.length; i++){
-      if(this.array[i+ 1] == id){
-        return this.array;
-      }
+  getById(id: number): T | undefined {
+    return this.items.find((items) => items.id === id);
+  }
+  update(id: number, item: T): boolean {
+    const index = this.items.findIndex((item) => item.id === id);
+    if (index !== -1) {
+      this.items[index] = item;
+      return true;
+    } else {
+      return false;
     }
-  }
-  update(id: number, item: T): boolean{
-    return true;
   }
   delete(id: number): boolean {
-    let status: boolean = false;
-    for(let i: number = 0; i < this.array.length; i++){
-      if(this.array[i+ 1] == id){
-        status = true;
-      }
+    const index = this.items.findIndex((item) => item.id === id);
+    if (index !== -1) {
+      this.items.splice(index, 1);
+      return true;
+    } else {
+      return false;
     }
-    return status;
   }
 }
 
@@ -241,24 +243,101 @@ const userRepo = new Repository<User>();
 userRepo.add({ id: 1, name: "Alice" });
 userRepo.add({ id: 2, name: "Bob" });
 
-console.log(userRepo.getAll().length);  // Output: 2
+console.log(userRepo.getAll().length); // Output: 2
 console.log(userRepo.getById(1)?.name); // Output: Alice
 
 userRepo.update(1, { id: 1, name: "Alice Updated" });
 console.log(userRepo.getById(1)?.name); // Output: Alice Updated
 
 userRepo.delete(2);
-console.log(userRepo.getAll().length);  // Output: 1
+console.log(userRepo.getAll().length); // Output: 1
 
 // soal 14
-function getPropertyValue<T, K extends keyof T>(object: T, name: K): string{
-  
+function getPropertyValue<T, K extends keyof T>(object: T, name: K): T[K] {
+  return object[name];
 }
 
 const user = { name: "Alice", age: 25, email: "alice@example.com" };
 
-console.log(getPropertyValue(user, "name"));   // Output: Alice
-console.log(getPropertyValue(user, "age"));    // Output: 25
-console.log(getPropertyValue(user, "email"));  // Output: alice@example.com
+console.log(getPropertyValue(user, "name")); // Output: Alice
+console.log(getPropertyValue(user, "age")); // Output: 25
+console.log(getPropertyValue(user, "email")); // Output: alice@example.com
 
 // getPropertyValue(user, "invalid");  // ❌ Error: invalid bukan property dari user
+
+// soal 15
+function merge<T extends { id: number }, U extends { id: number }>(
+  obj1: T,
+  obj2: U,
+) {
+  return { ...obj1, ...obj2 };
+}
+
+const obj1 = { id: 1, name: "Alice" };
+const obj2 = { id: 1, age: 25 };
+
+const merged = merge(obj1, obj2);
+console.log(merged); // Output: { id: 1, name: "Alice", age: 25 }
+
+// merge({ name: "Bob" }, { age: 30 });  // ❌ Error: kedua tidak punya id
+
+// soal 16
+class Cachee<T extends { id: number }> {
+  public storage: Map<number, T> = new Map();
+  set(item: T): void {
+    this.storage.set(item.id, item);
+  }
+  get(id: number): T | undefined {
+    return this.storage.get(id);
+  }
+  getAll(): T[] {
+    return Array.from(this.storage.values());
+  }
+  clear(): void {
+    this.storage.clear();
+  }
+}
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
+
+const cache = new Cachee<Product>();
+cache.set({ id: 1, name: "Laptop", price: 15000000 });
+cache.set({ id: 2, name: "Mouse", price: 500000 });
+
+console.log(cache.get(1)?.name); // Output: Laptop
+console.log(cache.getAll().length); // Output: 2
+
+cache.clear();
+console.log(cache.getAll().length); // Output: 0
+
+// soal 17
+export function fetchData<T>(value: T): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    setTimeout(() => {
+      if (value) {
+        resolve(value);
+      } else {
+        reject(value);
+      }
+    }, 1000);
+  });
+}
+
+interface Userr {
+  id: number;
+  name: string;
+}
+
+const result = await fetchData<Userr>({ id: 1, name: "Alice" });
+console.log(result.name); // Output: Alice (setelah 1 detik)
+
+const numbers = await fetchData<number[]>([1, 2, 3]);
+console.log(numbers.length); // Output: 3
+
+// soal 18
+
+// soal 19
