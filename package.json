@@ -1,0 +1,20 @@
+{
+  "name": "latihan_typescript_generic",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/jwjooth/latihan_typescript_generic#readme",
+  "bugs": {
+    "url": "https://github.com/jwjooth/latihan_typescript_generic/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwjooth/latihan_typescript_generic.git"
+  },
+  "license": "ISC",
+  "author": "Jordan Theovandy",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

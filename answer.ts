@@ -339,5 +339,205 @@ const numbers = await fetchData<number[]>([1, 2, 3]);
 console.log(numbers.length); // Output: 3
 
 // soal 18
+function isOfType<T>(value: unknown, type: string): value is T {
+  if (typeof value === "string") {
+    return true;
+  } else if (typeof value === "number") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+const value: unknown = "hello";
+
+if (isOfType<string>(value, "string")) {
+  console.log(value.toUpperCase()); // Output: HELLO
+}
+
+const number: unknown = 42;
+if (isOfType<number>(number, "number")) {
+  console.log(number * 2); // Output: 84
+}
 
 // soal 19
+function filterAndMap<T, U>(
+  value: T[],
+  filter: (value: T) => boolean,
+  map: (value: T) => U,
+): U[] {
+  let array: U[] = [];
+  for (let i = 0; i < value.length; i++) {
+    if (filter(value[i])) {
+      let result = map(value[i]);
+      array.push(result);
+    }
+  }
+  return array;
+}
+
+const numberss = [1, 2, 3, 4, 5, 6];
+
+const resultt = filterAndMap<number, number>(
+  numberss,
+  (n) => n > 2, // Filter: only > 2
+  (n) => n * 2, // Map: multiply by 2
+);
+
+console.log(resultt); // Output: [6, 8, 10, 12]
+
+// soal 20
+function createReadonlyArray<T>(param: T[]): ReadonlyArray<T> {
+  return param;
+}
+
+const original = [1, 2, 3];
+const readonly = createReadonlyArray<number>(original);
+
+console.log(readonly[0]); // Output: 1
+
+// readonly[0] = 999;  // ❌ Error: readonly array cannot be modified
+
+// readonly.push(4);  // ❌ Error: readonly array has no push method
+
+// soal 21
+class Builder<T> {
+  private result: Partial<T> = {};
+  add(key: string, value: any): this {
+    (this.result as any)[key] = value;
+    return this;
+  }
+  remove(key: string): this {
+    delete (this.result as any)[key];
+    return this;
+  }
+  build(): T {
+    return this.result as T;
+  }
+}
+
+interface Users {
+  name: string;
+  email: string;
+  age: number;
+}
+
+const pengguna = new Builder<Users>()
+  .add("name", "Alice")
+  .add("email", "alice@example.com")
+  .add("age", 25)
+  .build();
+
+console.log(pengguna.name); // Output: Alice
+console.log(pengguna.age); // Output: 25
+
+// soal 22
+function getPropertyType<T, K extends keyof T>(value: T, params: K) {
+  return typeof value[params];
+}
+
+const jow = { name: "Alice", age: 25, active: true };
+
+console.log(getPropertyType(jow, "name")); // Output: "string"
+console.log(getPropertyType(jow, "age")); // Output: "number"
+console.log(getPropertyType(jow, "active")); // Output: "boolean"
+
+// soal 23
+function createRecord<T extends string, U>(
+  value: T[],
+  params: U[],
+): Record<T, U> {
+  const result = {} as Record<T, U>;
+  for (let i = 0; i < value.length; i++) {
+    result[value[i]] = params[i];
+  }
+  return result;
+}
+
+const keys: ("name" | "email" | "phone")[] = ["name", "email", "phone"];
+const values = ["Alice", "alice@example.com", "081234567890"];
+
+const record = createRecord<"name" | "email" | "phone", string>(keys, values);
+
+console.log(record.name); // Output: Alice
+console.log(record.email); // Output: alice@example.com
+
+console.log("-----");
+
+// soal 24
+function pipe<T>(
+  value: T,
+  function1: (value: T) => void,
+  function2: (value: T) => void,
+  function3: (value: T) => void,
+) {
+  let fungsi1 = function1(value);
+  let fungsi2 = function2(fungsi1);
+  let fungsi3 = function2(value);
+  let result = 
+}
+
+const result3 = pipe<number>(
+  5,
+  (n) => n * 2, // 5 * 2 = 10
+  (n) => n + 5, // 10 + 5 = 15
+  (n) => n / 3, // 15 / 3 = 5
+);
+
+console.log(result3); // Output: 5
+
+const stringResult = pipe<string>(
+  "hello",
+  (s) => s.toUpperCase(), // HELLO
+  (s) => s + "!", // HELLO!
+  (s) => s.repeat(2), // HELLO!HELLO!
+);
+
+console.log(stringResult); // Output: HELLO!HELLO!
+
+// soal 25
+function Iterator<T>(value: T){
+  function hasNext(): boolean {
+    return true;
+  }
+  function next(): T {
+    throw new Error();
+  }
+  function reset(): void {
+
+  }
+  function current(): T {
+
+  }
+}
+
+const itemss = ["a", "b", "c"];
+const iterator = new Iterator<string>(itemss);
+
+console.log(iterator.current());  // Output: a
+console.log(iterator.hasNext());  // Output: true
+
+iterator.next();
+console.log(iterator.current());  // Output: b
+
+iterator.reset();
+console.log(iterator.current());  // Output: a
+
+function updatePartial<T>(value: T, updated: T[]){
+
+}
+
+interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  age: number;
+}
+
+const iuser: IUser = { id: 1, name: "Alice", email: "alice@example.com", age: 25 };
+
+const updated2 = updatePartial<IUser>(iuser, { name: "Alice Updated", age: 26 });
+
+console.log(updated2.name);   // Output: Alice Updated
+console.log(updated2.email);  // Output: alice@example.com
+console.log(updated2.age);    // Output: 26
